@@ -1,64 +1,71 @@
-# Assignment: Grouping and Summarizing Data with SQL
-Instructions: Use the provided sample database tables (patients, providers, visits, ed_visits, admissions, discharges) to answer the following questions. Write SQL queries to perform grouping and summarizing tasks using aggregate functions and the GROUP BY clause.
+-- USE hospital;
 
-## Learning Objectives
-- Understand how to use aggregate functions (COUNT, SUM, AVG, MIN, MAX) in SQL for analysis
-- Learn how to group data using the ```GROUP BY``` clause to summarize information
-- Apply the ```HAVING``` clause to filter grouped data based on specific conditions
-- Generate financial reports by combining grouping and aggregate functions in SQL queries.
+-- question 1.1: Total number of patient admissions
+-- SELECT COUNT(*) AS total_admissions
+-- FROM admissions;
 
-## What you’ll need:
-- Access to a computer with internet access
-- A code editor (e.g., Visual Studio Code)
+-- question 1.2: Average length of stay (difference between discharge date and admission date)
+-- SELECT AVG(DATEDIFF(d.discharge_date, a.admission_date)) AS avg_length_of_stay
+-- FROM admissions a
+-- JOIN discharges d ON a.admission_id = d.admission_id;
 
-## Submission
-- Clone the project on your local computer
-- Create a file named answers.sql
-- Run the queries on MySQL workbench and once they are successfull copy and paste on the answers.sql file on VS code
-- Make sure you clearly comment your answers. Example:
-```sql
--- question 1.1
-SELECT * FROM table_one;
+-- question 2.1: Total number of admissions by primary diagnosis
+-- SELECT primary_diagnosis, COUNT(*) AS total_admissions
+-- FROM admissions
+-- GROUP BY primary_diagnosis;
 
--- question 1.2
-SELECT * RFOM table_two;
-```
-- Once you finish the assignment, push the code to github
+-- question 2.2: Average length of stay by service
+-- SELECT a.service, AVG(DATEDIFF(d.discharge_date, a.admission_date)) AS avg_length_of_stay
+-- FROM admissions a
+-- JOIN discharges d ON a.admission_id = d.admission_id
+-- GROUP BY a.service;
 
-<br/><br/>
-## Part 1: Basic Aggregate Functions
-**1.1).** Write a query to find the total number of patient admissions in the admissions table.<br/>
-**1.2).** Write a query to calculate the average length of stay (difference between discharge date and admission date) for all patients.
+-- question 2.3: Count of discharges by discharge disposition
+-- SELECT discharge_disposition, COUNT(*) AS total_discharges
+-- FROM discharges
+-- GROUP BY discharge_disposition;
 
-<br/>
+-- question 3.1: Services with total number of admissions greater than 5
+-- SELECT service, COUNT(*) AS total_admissions
+-- FROM admissions
+-- GROUP BY service
+-- HAVING total_admissions > 5;
 
-## Part 2: Grouping Data
-**2.1).** Write a query to group admissions by primary_diagnosis and calculate the total number of admissions for each diagnosis.<br/>
-**2.2).** Write a query to group admissions by service and calculate the average length of stay for each service (e.g., Cardiology, Neurology).<br/>
-**2.3).** Write a query to group discharges by discharge_disposition and count the number of discharges in each category (e.g., Home, Expired, Transfer).
+-- question 3.2: Average length of stay for "Stroke" patients
+-- SELECT AVG(DATEDIFF(d.discharge_date, a.admission_date)) AS avg_length_of_stay
+-- FROM admissions a
+-- JOIN discharges d ON a.admission_id = d.admission_id
+-- WHERE a.primary_diagnosis = 'Stroke';
 
-<br/>
+-- question 4.1: Total emergency department visits by acuity
+-- SELECT acuity, COUNT(*) AS total_visits
+-- FROM ed_visits
+-- GROUP BY acuity;
 
-## Part 3: Combining Aggregates and Filtering
-**3.1).** Write a query to group admissions by service and show the services where the total number of admissions is greater than 5.<br/>
-**3.2).** Write a query to find the average length of stay for patients admitted with a primary diagnosis of "Stroke" in the admissions table.
+-- question 4.2: Total number of admissions by primary diagnosis and service
+-- SELECT primary_diagnosis, service, COUNT(*) AS total_admissions
+-- FROM admissions
+-- GROUP BY primary_diagnosis, service;
 
-<br/>
+-- question 5.1: Total admissions per month
+-- SELECT MONTH(admission_date) AS month, COUNT(*) AS total_admissions
+-- FROM admissions
+-- GROUP BY MONTH(admission_date);
 
-## Part 4: Advanced Grouping and Summarizing
-**4.1).** Write a query to group emergency department visits (ed_visits) by acuity and calculate the total number of visits for each acuity level.<br/>
-**4.2).** Write a query to group admissions by primary_diagnosis and service, showing the total number of admissions for each combination.
+-- question 5.2: Maximum length of stay for each primary diagnosis
+-- SELECT a.primary_diagnosis, MAX(DATEDIFF(d.discharge_date, a.admission_date)) AS max_length_of_stay
+-- FROM admissions a
+-- JOIN discharges d ON a.admission_id = d.admission_id
+-- GROUP BY a.primary_diagnosis;
 
-<br/>
+-- Bonus challenge: Total and average length of stay by service, ordered by highest average length of stay
+-- SELECT a.service, 
+       -- SUM(DATEDIFF(d.discharge_date, a.admission_date)) AS total_length_of_stay,
+       -- AVG(DATEDIFF(d.discharge_date, a.admission_date)) AS avg_length_of_stay
+-- FROM admissions a
+-- JOIN discharges d ON a.admission_id = d.admission_id
+-- GROUP BY a.service
+-- ORDER BY avg_length_of_stay DESC;
 
-## Part 5: Practical Financial Analysis
-**5.1).** Write a query to group admissions by month (using the admission_date) and calculate the total number of admissions per month.<br/>
-**5.2** Write a query to find the maximum length of stay for each primary_diagnosis in the admissions table.
 
-<br/>
 
-## Bonus Challenge (optional)
-Write a query to group admissions by service and calculate both the total and average length of stay for each service, ordered by the highest average length of stay.
-
-<br/><br/>
-# NOTE: Do not fork the repository
